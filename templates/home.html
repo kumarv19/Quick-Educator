@@ -1,0 +1,196 @@
+<html>
+
+  <style>
+
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    #search {
+      width: 70%;
+      height: 50px;
+      border-radius: 25px;
+      padding-left: 20px;
+    }
+    .block {
+      width: 33%;
+      float:left;
+    }
+    .top {
+      margin-top: 20px;
+    }
+
+      /* NAVBAR STYLING STARTS */
+    .navbar {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 20px;
+     background-color: #573b8a;
+     color: #fff;
+    }
+    .nav-links a {
+     color: #fff;
+    }
+    /* LOGO */
+    .logo {
+     font-size: 32px;
+    }
+    /* NAVBAR MENU */
+    .menu {
+     display: flex;
+     gap: 1em;
+     font-size: 18px;
+    }
+    .menu li:hover {
+     background-color: #573b8c;
+     border-radius: 5px;
+     transition: 0.3s ease;
+    }
+    .menu li {
+     padding: 5px 14px;
+    }
+    /* UTILITIES */
+    *{
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+    }
+    body {
+     font-family: cursive;
+    }
+    a {
+     text-decoration: none;
+     color: inherit;
+    }
+    li {
+     list-style: none;
+    }
+
+  </style>
+
+
+<body>
+  <nav class="navbar">
+     <!-- LOGO -->
+      <div class="logo"><a href="{{ url_for('home') }}">QuickEducator</a></div>
+      <ul class="nav-links">
+        <!-- NAVIGATION MENUS -->
+        <div class="menu">
+          <li>Welcome {{session.username}}</a></li>
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+          <li><a href="{{ url_for('registered_courses') }}">Your Courses</a></li>
+        </div>
+      </ul>
+  </nav>
+
+  <div>
+    <h2> Recommendations </h2>
+    {% if rec_course_names is defined %}
+    <table>
+      <tr>
+        <th>Course</th>
+        <th>Course fee</th>
+        <th>Course Difficulty</th>
+        <th>Course Rating</th>
+      </tr>
+      {% for n in rec_course_names %}
+        <tr>
+          <td><a href="{{url_for('courses', course_id=n['course_id'])}}">{{n['course_name']}}</a></td>
+          <td>{{n['course_fee']}}</td>
+          <td>{{n['course_difficulty_level']}}</td>
+          <td>{{n['course_rating']}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <div>No recommendations available</div>
+    {% endif %}
+  </div>
+
+  <div>
+    <h2>  Courses </h2> 
+    <form method="POST" action="/home">
+      <div class="top">
+        <center>
+          <input id="search" type="text" name="q" placeholder="Search for Courses..">
+        </center>
+      </div>
+      <div class="top">
+        <center>
+          <div class="block">
+            <label for="difficulty">Difficulty:</label>
+            <select id="difficulty" name="difficulty">
+              <option selected value=""></option>
+              <option value="Beginner Level">Beginner Level</option>
+              <option value="Intermediate Level">Intermediate Level</option>
+              <option value="Advanced Level">Advanced Level</option>
+            </select>
+          </div>
+          <div class="block">
+            <label for="sort">Sort By:</label>
+            <select id="sort" name="sort">
+              <option selected value=""></option>
+              <option value="course_fee">Course Fee</option>
+              <option value="course_rating">Course Rating</option>
+            </select>
+            <label for="order"></label>
+            <select id="order" name="order">
+              <option selected value="ASC">ASC</option>
+              <option value="DESC">DESC</option>
+            </select>
+          </div>
+          <div class="block">
+            <label for="Professor">Professor:</label>
+            <select id="prof" name="prof">
+              <option selected value=""></option>
+              {% for p in professors %}
+                <option value="{{p['user_id']}}">{{p['first_name']}} {{p['last_name']}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </center>
+      </div>
+      <div class="top">
+        <center>
+          <input type="submit" value="Search">
+        </center>
+      </div>
+    </form>
+  </div>
+
+  {% if courses is defined %}
+  <table>
+    <tr>
+      <th>Course</th>
+      <th>Professor</th>
+      <th>Course fee</th>
+      <th>Course Difficulty</th>
+      <th>Course Rating</th>
+    </tr>
+    {% for n in courses %}
+      <tr>
+        <td><a href="{{url_for('courses', course_id=n['course_id'])}}">{{n['course_name']}}</a></td>
+        <td><a href="{{url_for('professors', prof_id=n['user_id'])}}">{{n['first_name']}} {{n['last_name']}}</a></td>
+        <td>{{n['course_fee']}}</td>
+        <td>{{n['course_difficulty_level']}}</td>
+        <td>{{n['course_rating']}}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  {% endif %}
+
+</body>
+
+
+</html>
